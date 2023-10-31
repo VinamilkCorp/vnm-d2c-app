@@ -1,0 +1,21 @@
+api_version = "2023-10"
+
+[[extensions]]
+handle = "address-validation"
+name = "Address validation"
+description = "t:description"
+type = "function"
+
+  [[extensions.targeting]]
+  target = "purchase.validation.run"
+  input_query = "src/run.graphql"
+  export = "run"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"
+  watch = ['src/**/*.ts']
+
+  # [extensions.ui.paths]
+  # create = "/"
+  # details = "/"
