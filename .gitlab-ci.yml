@@ -53,5 +53,5 @@ deploy-sit-job:      # This job runs in the deploy stage.
     - develop
   script:
     - echo "Deploying application..."
-    - kubectl rollout restart -n vnmt01 deployment d2c-app
+    - kubectl rollout restart -n vnmt01 deployment vnm-d2c-app
     - echo "Application successfully deployed."
