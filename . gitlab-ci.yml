@@ -8,7 +8,7 @@ build-job:       # This job runs in the build stage, which runs first.
   stage: build
   only:
     - develop
-    - main
+    - pre
   script:
     - echo "Skip Build"
     
@@ -26,11 +26,11 @@ build-dockerhub-cr-image-job:
 
 build-azure-cr-image-job:
   stage: pack
-  environment: main
+  environment: pre
   before_script:
     - "echo $ACR_CI_REGISTRY_PASSWORD | docker login -u $ACR_CI_REGISTRY_USER --password-stdin $ACR_CI_REGISTRY"
   only:
-    - main
+    - pre
   script:
     - echo "build docker image..."
     - export REPO=acr && export TARGET=amd64 && make push
@@ -41,7 +41,7 @@ unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   only:
     - develop
-    - main
+    - pre
   script:
     - echo "Running unit tests... This will take about 60 seconds."
     - echo "Code coverage is 90%"
