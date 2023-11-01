@@ -26,7 +26,7 @@ else
 	$(error unknown Repo >$(REPO)<)
 endif
 
-export IMAGE_NAME:=om
+export IMAGE_NAME:=vnm-d2c-app
 export CE_TAG:=$(shell ./bin/version.sh)
 export IMAGE:=$(MAINTAINER)/$(IMAGE_NAME)
 
