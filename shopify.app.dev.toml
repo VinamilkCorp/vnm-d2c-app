@@ -2,7 +2,7 @@
 
 name = "vnm-d2c-app-dev"
 client_id = "f57ab2d0ad6cfcb2950443e143ac488c"
-application_url = "https://shopify.dev/apps/default-app-home"
+application_url = "https://vnm-d2c-app.apps.vinamilk.com.vn"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "read_products,write_products,write_delivery_customizations,read_delive
 
 [auth]
 redirect_urls = [
-  "https://shopify.dev/apps/default-app-home/auth/callback",
-  "https://shopify.dev/apps/default-app-home/auth/shopify/callback",
-  "https://shopify.dev/apps/default-app-home/api/auth/callback"
+  "https://vnm-d2c-app.apps.vinamilk.com.vn/auth/callback",
+  "https://vnm-d2c-app.apps.vinamilk.com.vn/auth/shopify/callback",
+  "https://vnm-d2c-app.apps.vinamilk.com.vn/api/auth/callback"
 ]
 
 [webhooks]
