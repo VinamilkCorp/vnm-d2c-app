@@ -27,6 +27,8 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
 ) {
   const { api } = props;
 
+  console.log('props', props);
+
   const [showError, setShowError] = useState<boolean>(false);
 
   const [geoCodeData, setGeoCodeData] = useState<any>(null);
@@ -44,11 +46,13 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
   const sParameter = encodeURIComponent(addressFormatted.trim());
 
   const queryApi = useCallback(async () => {
+    const appDomain = process.env.SHOPIFY_APP_URL;
+
     try {
       const token = await api.sessionToken.get();
 
       const res = await fetch(
-        `https://briefing-feat-valid-scheduled.trycloudflare.com/api/geocode?address=${sParameter}`,
+        `${appDomain}/api/geocode?address=${sParameter}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
