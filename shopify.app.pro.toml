@@ -1,6 +1,6 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "vnm-d2c-app-dev"
+name = "vnm-eshop-master-app"
 client_id = "a28d37aff50f521b25e0c1218c720ef2"
 application_url = "https://vnm-d2c-app.apps.vinamilk.com.vn"
 embedded = true
@@ -12,8 +12,9 @@ scopes = "read_products,write_products,write_delivery_customizations,read_delive
 [auth]
 redirect_urls = [
   "https://vnm-d2c-app.apps.vinamilk.com.vn/auth/callback",
+  "https://vnm-d2c-app.apps.vinamilk.com.vn/api/auth/callback",
   "https://vnm-d2c-app.apps.vinamilk.com.vn/auth/shopify/callback",
-  "https://vnm-d2c-app.apps.vinamilk.com.vn/api/auth/callback"
+  "https://vnm-d2c-app.apps.vinamilk.com.vn/api/auth/shopify/callback"
 ]
 
 [webhooks]
