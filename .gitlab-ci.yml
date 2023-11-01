@@ -15,8 +15,8 @@ build-job:       # This job runs in the build stage, which runs first.
 build-dockerhub-cr-image-job:
   stage: pack
   environment: develop
-  # before_script:
-  #   - "echo $SIT_CI_REGISTRY_PASSWORD | docker login -u $SIT_CI_REGISTRY_USER --password-stdin "
+  before_script:
+    - "echo $SIT_CI_REGISTRY_PASSWORD | docker login -u $SIT_CI_REGISTRY_USER --password-stdin "
   only:
     - develop
   script:
