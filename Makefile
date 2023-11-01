@@ -1,37 +1,54 @@
-.PHONY: init
-init: postinstall shortcut
 
-.PHONY: postinstall
-postinstall:
-	npx husky install
 
-.PHONY: prepare
-prepare: link env-pull
+all: build
 
-.PHONY: shortcut
-shortcut: ## Creates a global h2 shortcut for Shopify CLI using shell aliases.
-	npx shopify hydrogen shortcut
+help:
+	# General commands:
+	# make all => build push
+	# make prepare - prepare environment variables for given TARGET (arm32/arm64)
+	# make info - show information about the current version
+	# make version - return the platform and version machine friendly
+	#
+	# Commands
+	# make build - build the AuthService image
+	# make push - push the image to Docker Hub
+	# make push-manifest - push manifest files to Docker hub using TAGLIST variable for choosing the docker images by tag
+	# make taglist - returns the taglist
+	#
 
-.PHONY: list
-list: ## Lists all Hydrogen storefronts available to link to your local development environment.
-	npx shopify hydrogen list
+prepare: FORCE
 
-.PHONY: link
-link: ## Links your local development environment to a remote Hydrogen storefront.
-	npx shopify hydrogen link
+ifeq ($(REPO), dockerhub)
+    export MAINTAINER:=vinamilkcorp
+else ifeq ($(REPO), acr)
+    export MAINTAINER:=vnmcontainerregistry.azurecr.io
+else
+	$(error unknown Repo >$(REPO)<)
+endif
 
-.PHONY: unlink
-unlink: ## Unlinks your local development environment from a remote Hydrogen storefront.
-	npx shopify hydrogen unlink
+export IMAGE_NAME:=om
+export CE_TAG:=$(shell ./bin/version.sh)
+export IMAGE:=$(MAINTAINER)/$(IMAGE_NAME)
 
-.PHONY: env-list
-env-list: # Lists all environments available on the linked Hydrogen storefront.
-	npx shopify hydrogen env list
+info: prepare
+	@echo "---"
+	@echo Version: $(CE_TAG)
+	@echo Image: $(IMAGE):$(TARGET)
+	@echo ""
+	@echo Brought to you by lttrung1
+	@echo "---"
 
-.PHONY: env-pull
-env-pull: ## Pulls environment variables from the linked Hydrogen storefront and writes them to an .env file.
-	npx shopify hydrogen env pull
 
-.PHONY: vnmdev
-vnmdev: ## Local Vinamilk start development.
-	NODE_TLS_REJECT_UNAUTHORIZED=0 npx shopify hydrogen dev
+build: info
+	@./bin/build.sh
+
+push: build
+	@./bin/push.sh
+
+clean:  info
+	@./bin/cleanup.sh
+
+version:
+	@echo $(TARGET)-$(CE_TAG)
+
+FORCE:
