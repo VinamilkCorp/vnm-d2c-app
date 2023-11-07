@@ -33,16 +33,7 @@ export default async function handleRequest(
           const body = new PassThrough();
           const stream = createReadableStreamFromReadable(body);
 
-          console.log(
-            'request.headers.get("Authorization")',
-            request.headers.get("Authorization")
-          );
-
           responseHeaders.set("Content-Type", "text/html");
-          responseHeaders.set(
-            "Access-Control-Allow-Origin",
-            "https://cdn.shopify.com"
-          );
 
           resolve(
             new Response(stream, {
