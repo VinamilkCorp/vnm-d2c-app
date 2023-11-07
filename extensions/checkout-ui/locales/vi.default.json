@@ -1,0 +1,16 @@
+{
+  "welcome": "Welcome to the {{target}} extension!",
+  "only-delivery-vietnam": "Xin lỗi, chúng tôi chỉ có thể giao hàng tại Việt Nam",
+  "invalid-shipping-address": "Chúng tôi không tìm được địa chỉ của bạn, vui lòng kiểm tra và chỉnh sửa thông tin địa chỉ",
+  "continue-payment":"Tiếp tục thanh toán",
+  "confirm-new-shipping-address": "Xác nhận địa chỉ mới",
+  "geocode-not-match-address": "Chúng tôi không tìm được địa chỉ của bạn, bạn có thể chọn địa chỉ thay thế hoặc chỉnh sửa thông tin vị trí của bạn",
+  "geocode-status-err": {
+    "ZERO_RESULTS": "Chúng tôi không tìm được địa chỉ của bạn, vui lòng kiểm tra và chỉnh sửa thông tin địa chỉ",
+    "OVER_DAILY_LIMIT": "Đã có lỗi xảy ra, chúng tôi không thể xác thực dịa chỉ của bạn. Vui lòng thử trong giây lát!",
+    "OVER_QUERY_LIMIT": "Đã có lỗi xảy ra, chúng tôi không thể xác thực dịa chỉ của bạn. Vui lòng thử trong giây lát!",
+    "REQUEST_DENIED": "Đã có lỗi xảy ra, chúng tôi không thể xác thực dịa chỉ của bạn. Vui lòng thử trong giây lát!",
+    "INVALID_REQUEST": "Địa chỉ của bạn không hợp lệ, vui lòng kiểm tra và chỉnh sửa thông tin địa chỉ",
+    "UNKNOWN_ERROR": "Đã có lỗi xảy ra, chúng tôi không thể xác thực dịa chỉ của bạn. Vui lòng thử trong giây lát!"
+  }
+}

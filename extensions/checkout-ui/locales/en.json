@@ -1,0 +1,16 @@
+{
+  "welcome": "Welcome to the {{target}} extension!",
+  "only-delivery-vietnam": "Sorry, we can only delivery in Vietnam",
+  "invalid-shipping-address": "We couldn't find your address, you can choose an alternative address or edit your location information",
+  "continue-payment":"Continue payment",
+  "confirm-new-shipping-address": "Confirm new address",
+  "geocode-not-match-address": "We couldn't find your address, you can choose an alternative address or edit your location information",
+  "geocode-status-err": {
+    "ZERO_RESULTS": "We couldn't find your address, please check and edit your address information",
+    "OVER_DAILY_LIMIT": "An error occurred, we were unable to verify your address. Please try again!",
+    "OVER_QUERY_LIMIT": "An error occurred, we were unable to verify your address. Please try again!",
+    "REQUEST_DENIED": "An error occurred, we were unable to verify your address. Please try again!",
+    "INVALID_REQUEST": "Your address is invalid, please check and edit the address information",
+    "UNKNOWN_ERROR": "An error occurred, we were unable to verify your address. Please try again!"
+  }
+}

@@ -20,8 +20,6 @@ import { authenticate } from "../shopify.server";
 export const loader = async ({ params, request }) => {
   const { functionId, id } = params;
 
-  console.log("params", params);
-
   const { admin } = await authenticate.admin(request);
 
   if (id != "new") {
@@ -51,7 +49,6 @@ export const loader = async ({ params, request }) => {
     );
 
     const responseJson = await response.json();
-    console.log("responseJson", responseJson);
     const deliveryCustomization = responseJson.data.deliveryCustomization;
     const metafieldValue = JSON.parse(deliveryCustomization.metafield.value);
 
@@ -155,8 +152,6 @@ export default function DeliveryCustomization() {
   const actionData = useActionData();
   const navigation = useNavigation();
   const loaderData = useLoaderData();
-
-  console.log("loaderData", loaderData);
 
   const [stateProvinceCode, setStateProvinceCode] = useState(
     loaderData.stateProvinceCode

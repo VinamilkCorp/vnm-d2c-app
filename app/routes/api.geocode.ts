@@ -14,9 +14,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   searchParams.append("key", GG_GEOCODE_API_KEY);
 
-  // searchParams.append("result_type", "street_address");
-
-  // searchParams.append("components", "country:VN");
+  searchParams.append("components", "route");
 
   try {
     const res = await fetch(
