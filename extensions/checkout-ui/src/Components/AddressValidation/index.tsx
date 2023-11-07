@@ -55,9 +55,9 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
     const sParameter = encodeURIComponent(addressFormatted.trim());
 
     const queryApi = async () => {
-      // const appDomain = process.env.SHOPIFY_APP_URL;
+      const appDomain = process.env.SHOPIFY_APP_URL;
 
-      const appDomain = "https://qpt3bpb4-3000.asse.devtunnels.ms";
+      // const appDomain = "https://qpt3bpb4-3000.asse.devtunnels.ms";
 
       try {
         const token = await api.sessionToken.get();
