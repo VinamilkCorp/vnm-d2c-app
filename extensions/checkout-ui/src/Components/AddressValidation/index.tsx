@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   useBuyerJourneyIntercept,
   Button,
@@ -27,13 +27,17 @@ type Props<Target extends keyof ExtensionTargets> = {
 };
 
 export default function AddressValidation<Target extends RenderExtensionTarget>(
-  props: Props<Target>
+  props: Props<Target>,
 ) {
   const { api } = props;
+
+  const [addressFormatted, setAddressFormatted] = useState<string>("");
 
   const [addressError, setAddressError] = useState<string>("");
 
   const [geoCodeData, setGeoCodeData] = useState<any>(null);
+
+  const [shouldFetch, setShouldFetch] = useState<boolean>(false);
 
   const [addressId, setAddressId] = useState<string>("");
 
@@ -45,19 +49,26 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
 
   const translate = useTranslate();
 
+  const appDomain =
+    process.env.NODE_ENV === "development"
+      ? new URL(api.extension.scriptUrl)?.origin
+      : process.env.SHOPIFY_APP_URL;
+
   useEffect(() => {
     const addressFormatted = shippingAddress?.address1
-      ? `${shippingAddress?.address2 || ""} ${shippingAddress?.address1} ${
-          shippingAddress?.city
-        }`
+      ? `${
+          shippingAddress?.address2 || ""
+        } ${shippingAddress?.address1} ${shippingAddress?.city}`
       : "";
 
+    setAddressFormatted(addressFormatted);
+  }, [shippingAddress]);
+
+  useEffect(() => {
     const sParameter = encodeURIComponent(addressFormatted.trim());
 
     const queryApi = async () => {
-      const appDomain = process.env.SHOPIFY_APP_URL;
-
-      // const appDomain = "https://qpt3bpb4-3000.asse.devtunnels.ms";
+      setShouldFetch(false);
 
       try {
         const token = await api.sessionToken.get();
@@ -69,7 +80,7 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
         const data = await res.json();
 
@@ -79,7 +90,7 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
 
         if (data && data?.results) {
           const isPartialMatch = data?.results?.some(
-            (ele: any) => ele?.partial_match
+            (ele: any) => ele?.partial_match,
           );
 
           if (isPartialMatch) {
@@ -98,14 +109,23 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
       }
     };
 
-    if (canBlockProgress && addressFormatted) {
+    if (canBlockProgress && addressFormatted && shouldFetch) {
       queryApi();
     }
-  }, [translate, shippingAddress, api.sessionToken, canBlockProgress]);
+  }, [
+    translate,
+    api.sessionToken,
+    appDomain,
+    addressFormatted,
+    canBlockProgress,
+    shouldFetch,
+  ]);
 
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     if (canBlockProgress) {
-      if (shippingAddress?.countryCode !== "VN") {
+      setShouldFetch(canBlockProgress);
+
+      if (api?.shippingAddress?.current?.countryCode !== "VN") {
         return {
           behavior: "block",
           reason: "Invalid shipping country",
@@ -118,7 +138,7 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
         };
       }
 
-      if (geoCodeData && geoCodeData?.length) {
+      if (geoCodeData?.length) {
         return {
           behavior: "block",
           reason: "Invalid shipping address",
@@ -127,6 +147,13 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
           },
         };
       }
+
+      return {
+        behavior: "allow",
+        perform: () => {
+          setAddressError("");
+        },
+      };
     }
 
     return {
@@ -149,21 +176,49 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
 
   const handleOnSubmitChoseAddress = async () => {
     const choiceAddress = geoCodeData.find(
-      (ele: any) => ele.place_id === addressId
+      (ele: any) => ele.place_id === addressId,
     );
 
-    const formatAddress = Object.assign(
-      shippingAddress as MailingAddress,
-      formatGeocodeAddress(choiceAddress)
-    );
+    const addressApply = formatGeocodeAddress(choiceAddress);
+
+    // const formatAddress = Object.assign(shippingAddress as MailingAddress, {
+    //   ...addressApply,
+    // formatted: [
+    //   shippingAddress?.phone,
+    //   shippingAddress?.firstName,
+    //   shippingAddress?.lastName,
+    //   addressApply?.address2,
+    //   addressApply?.address1,
+    //   addressApply?.city,
+    // ],
+    // });
+
+    const newAddress = {
+      // ...formatAddress,
+      address1: addressApply?.address1,
+      address2: addressApply?.address2,
+      city: addressApply?.city,
+      countryCode: addressApply?.countryCode || "VN",
+      // latitude: addressApply?.latitude,
+      // longitude: addressApply?.longitude,
+      provinceCode: addressApply?.provinceCode,
+    };
 
     try {
-      await applyShippingAddressChange?.({
+      const result = await applyShippingAddressChange?.({
         type: "updateShippingAddress",
-        address: {
-          ...formatAddress,
-        },
+        address: newAddress,
       });
+
+      console.log("applyShippingAddressChange", result);
+
+      if (result?.type === "success") {
+        setGeoCodeData([]);
+        setAddressError("");
+        setAddressFormatted("");
+      }
+
+      console.log("shippingAddress", shippingAddress);
     } catch (error) {
       console.error(error);
     }
@@ -202,5 +257,3 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
     </BlockStack>
   );
 }
-
-// export default AddressValidation;

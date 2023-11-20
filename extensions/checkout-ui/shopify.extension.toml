@@ -18,6 +18,10 @@ handle = "checkout-ui"
 target = "purchase.checkout.delivery-address.render-after"
 module = "./src/targets/delivery-address/index.tsx"
 
+[[extensions.targeting]]
+target = "purchase.checkout.shipping-option-list.render-after"
+module = "./src/targets/shipping-option/list/after/index.tsx"
+
 [extensions.capabilities]
 block_progress = true
 
