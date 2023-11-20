@@ -12,5 +12,6 @@
     "REQUEST_DENIED": "An error occurred, we were unable to verify your address. Please try again!",
     "INVALID_REQUEST": "Your address is invalid, please check and edit the address information",
     "UNKNOWN_ERROR": "An error occurred, we were unable to verify your address. Please try again!"
-  }
+  },
+  "fast-delivery-2hrs": "Fast delivery 2hrs"
 }

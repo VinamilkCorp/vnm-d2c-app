@@ -7,7 +7,7 @@ api_version = "2023-10"
 
 [[extensions]]
 type = "ui_extension"
-name = "checkout-ui"
+name = "Vinamilk checkout ui extension"
 handle = "checkout-ui"
 
 # Controls where in Shopify your extension will be injected,
@@ -17,6 +17,10 @@ handle = "checkout-ui"
 [[extensions.targeting]]
 target = "purchase.checkout.delivery-address.render-after"
 module = "./src/targets/delivery-address/index.tsx"
+
+[[extensions.targeting]]
+target = "purchase.checkout.shipping-option-list.render-after"
+module = "./src/targets/shipping-option/list/after/index.tsx"
 
 [extensions.capabilities]
 block_progress = true

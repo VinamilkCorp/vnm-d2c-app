@@ -1,9 +1,11 @@
+import type { CountryCode } from "@shopify/ui-extensions/checkout";
+
 export type ReturnShopifyAddress = {
   address1: string;
   address2: string;
   city: string;
   company?: string;
-  countryCode: string;
+  countryCode: CountryCode;
   latitude: string;
   longitude: string;
   provinceCode: string;
@@ -18,6 +20,6 @@ export type ReturnGeocodeAddress = {
   latitude: number;
   longitude: number;
   provinceCode?: string;
-  countryCode: string;
+  countryCode: CountryCode;
   zip: string;
 };
