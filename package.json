@@ -17,6 +17,8 @@
     "docker-start": "npm run setup && npm run start",
     "setup": "prisma generate && prisma migrate deploy",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "stylelint": "npx stylelint \"**/*.{css,scss}\"",
+    "stylelint:fix": "npx stylelint --fix \"**/*.{css,scss}\"",
     "shopify": "shopify",
     "prisma": "prisma"
   },
@@ -28,7 +30,10 @@
     "@shopify/app": "^3.48",
     "@shopify/app-bridge-types": "^0.0.3",
     "@shopify/cli": "^3.48",
+    "@shopify/discount-app-components": "^2.0.0",
     "@shopify/polaris": "^12.0.0",
+    "@shopify/react-form": "^2.5.5",
+    "@shopify/react-i18n": "^7.8.0",
     "@shopify/shopify-app-remix": "^2.0.2",
     "@shopify/shopify-app-session-storage-prisma": "^2.0.0",
     "cross-env": "^7.0.3",
@@ -54,5 +59,7 @@
     "web/frontend",
     "extensions/*"
   ],
-  "trustedDependencies": ["@shopify/plugin-cloudflare"]
+  "trustedDependencies": [
+    "@shopify/plugin-cloudflare"
+  ]
 }

@@ -1,0 +1,21 @@
+api_version = "2023-10"
+
+[[extensions]]
+handle = "cart-merge-expand"
+name = "Cart expand"
+description = "t:description"
+type = "function"
+
+  [[extensions.targeting]]
+  target = "purchase.cart-transform.run"
+  input_query = "src/run.graphql"
+  export = "run"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"
+  watch = ['src/**/*.ts']
+
+  [extensions.ui.paths]
+  create = "/"
+  details = "/"
