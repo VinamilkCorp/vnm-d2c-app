@@ -12,7 +12,7 @@ export const initialValues: ReturnGeocodeAddress = {
   street: "",
   streetNumber: "",
   district: "",
-  countryCode: "",
+  countryCode: "VN",
 };
 
 /**
@@ -52,7 +52,7 @@ export const formatGeocodeAddress = (geocodeData: any) => {
 
   const postalCode =
     addressComponent.find((ele: { types: string[] }) =>
-      ele.types.includes("postal_code")
+      ele.types.includes("postal_code"),
     )?.long_name || "";
 
   addressComponent.forEach((_: any, index: number) => {
@@ -62,7 +62,7 @@ export const formatGeocodeAddress = (geocodeData: any) => {
 
     if (
       addressComponent[index]?.types?.some(
-        (ele: string) => ele === "street_number" || ele === "premise"
+        (ele: string) => ele === "street_number" || ele === "premise",
       )
     ) {
       Object.assign(data, {
@@ -138,7 +138,7 @@ export const formatGeocodeAddress = (geocodeData: any) => {
  * @returns The function `formatAddressShopify` returns an object of type `ReturnShopifyAddress`.
  */
 export const formatAddressShopify = (
-  values: ReturnGeocodeAddress
+  values: ReturnGeocodeAddress,
 ): ReturnShopifyAddress => {
   const {
     streetNumber = "",
@@ -148,10 +148,9 @@ export const formatAddressShopify = (
     ...rest
   } = values;
 
-  const address1: string =
-    streetNumber && street ? `${streetNumber}, ${street}` : ""; // Create Shopify field address1
+  const address1: string = `${ward}, ${street}, ${district}`; // Create Shopify field address1
 
-  const address2: string = ward && district ? `${ward}, ${district}` : ""; // Create Shopify field address2
+  const address2: string = streetNumber ? `${streetNumber}` : ""; // Create Shopify field address2
 
   return {
     address1,

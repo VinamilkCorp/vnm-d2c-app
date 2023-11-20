@@ -12,5 +12,6 @@
     "REQUEST_DENIED": "Đã có lỗi xảy ra, chúng tôi không thể xác thực dịa chỉ của bạn. Vui lòng thử trong giây lát!",
     "INVALID_REQUEST": "Địa chỉ của bạn không hợp lệ, vui lòng kiểm tra và chỉnh sửa thông tin địa chỉ",
     "UNKNOWN_ERROR": "Đã có lỗi xảy ra, chúng tôi không thể xác thực dịa chỉ của bạn. Vui lòng thử trong giây lát!"
-  }
+  },
+  "fast-delivery-2hrs": "Giao nhanh 2h"
 }

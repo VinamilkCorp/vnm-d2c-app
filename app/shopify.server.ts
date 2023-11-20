@@ -20,7 +20,7 @@ const shopify = shopifyApp({
   distribution: AppDistribution.AppStore,
   restResources,
   logger: {
-    level: 3,
+    // level: 3,
     httpRequests: true,
   },
   webhooks: {
