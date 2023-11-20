@@ -2,7 +2,7 @@ api_version = "2023-10"
 
 [[extensions]]
 handle = "address-validation"
-name = "Address validation"
+name = "Vinamilk address validation extension"
 description = "t:description"
 type = "function"
 
