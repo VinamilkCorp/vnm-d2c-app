@@ -27,7 +27,7 @@ export const formatGeocodeAddress = (geocodeData: any) => {
     address_components = [],
     formatted_address = "",
     geometry = {},
-  } = geocodeData;
+  } = geocodeData || {};
 
   const addressComponent: any = address_components?.reverse() || []; // 'address_component' from PlaceApi - Autocomplete
 
@@ -148,13 +148,13 @@ export const formatAddressShopify = (
     ...rest
   } = values;
 
-  const address1: string = `${ward}, ${street}, ${district}`; // Create Shopify field address1
-
-  const address2: string = streetNumber ? `${streetNumber}` : ""; // Create Shopify field address2
+  // const address1: string = `${streetNumber}, ${ward}, ${street}, ${district}`; // Create Shopify field address1
+  const address1: string = [streetNumber, street, ward, district]
+    .filter(Boolean)
+    ?.join(", "); // Create Shopify field address1
 
   return {
     address1,
-    address2,
     city: rest.city || "",
     countryCode: rest.countryCode || DEFAULT_COUNTRY_CODE,
     latitude: rest.latitude.toString() || "",

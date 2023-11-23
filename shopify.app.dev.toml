@@ -2,7 +2,7 @@
 
 name = "Vinamilk D2C App (Development)"
 client_id = "f57ab2d0ad6cfcb2950443e143ac488c"
-application_url = "https://vnm-d2c-app.apps.vinamilk.com.vn"
+application_url = "https://cubic-assess-outdoor-surfing.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,10 @@ scopes = "write_checkouts,read_checkouts,read_products,write_products,write_ship
 
 [auth]
 redirect_urls = [
-  "https://vnm-d2c-app.apps.vinamilk.com.vn/auth/callback",
-  "https://vnm-d2c-app.apps.vinamilk.com.vn/auth/shopify/callback",
-  "https://vnm-d2c-app.apps.vinamilk.com.vn/api/auth/callback"
+  "https://cubic-assess-outdoor-surfing.trycloudflare.com/auth/callback",
+  "https://cubic-assess-outdoor-surfing.trycloudflare.com/auth/shopify/callback",
+  "https://cubic-assess-outdoor-surfing.trycloudflare.com/api/auth/callback",
+  "https://cubic-assess-outdoor-surfing.trycloudflare.com/.shopify/graphiql/auth/callback"
 ]
 
 [webhooks]
@@ -21,3 +22,7 @@ api_version = "2023-10"
 
 [pos]
 embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "eshopd02.myshopify.com"

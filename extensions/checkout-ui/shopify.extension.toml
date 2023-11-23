@@ -22,16 +22,13 @@ module = "./src/targets/delivery-address/index.tsx"
 target = "purchase.checkout.shipping-option-list.render-after"
 module = "./src/targets/shipping-option/list/after/index.tsx"
 
+[[extensions.targeting]]
+target = "purchase.checkout.actions.render-before"
+module = "./src/targets/actions/render-before/index.tsx"
+
 [extensions.capabilities]
 block_progress = true
-
-# Gives your extension access to directly query Shopify’s storefront API.
-# https://shopify.dev/docs/api/checkout-ui-extensions/unstable/configuration#api-access
 api_access = true
-
-# Gives your extension access to make external network calls, using the
-# JavaScript `fetch()` API. Learn more:
-# https://shopify.dev/docs/api/checkout-ui-extensions/unstable/configuration#network-access
 network_access = true
 
 # Loads metafields on checkout resources, including the cart,

@@ -11,10 +11,10 @@ function getConfig() {
       // 2. Update the documents array to point to files that use the storefront API
       // Do not mix and match storefront and admin API documents in the same file.
       // If a route needs both APIs, create a separate file for each API.
-      // shopifyStorefrontApi: {
-      //   schema: `https://shopify.dev/storefront-graphql-direct-proxy/${apiVersion}`,
-      //   documents: ["./app/routes/app.storefront.jsx"],
-      // },
+      shopifyStorefrontApi: {
+        schema: `https://shopify.dev/storefront-graphql-direct-proxy/${apiVersion}`,
+        documents: ["./app/routes/app.storefront.tsx"],
+      },
       shopifyAdminApi: {
         schema: `https://shopify.dev/admin-graphql-direct-proxy/${apiVersion}`,
         documents: ["./app/**/*.{graphql,js,ts,jsx,tsx}"],

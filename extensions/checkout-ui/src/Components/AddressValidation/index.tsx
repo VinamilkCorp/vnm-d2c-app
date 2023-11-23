@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useBuyerJourneyIntercept,
   Button,
@@ -8,163 +8,164 @@ import {
   Choice,
   Text,
   Grid,
-  useExtensionCapability,
   useShippingAddress,
   useTranslate,
+  useSessionToken,
+  useExtension,
 } from "@shopify/ui-extensions-react/checkout";
 import { formatGeocodeAddress } from "~src/utils";
-import type {
-  CheckoutApi,
-  ExtensionTargets,
-  MailingAddress,
-  RenderExtensionTarget,
-  StandardApi,
-} from "@shopify/ui-extensions/checkout";
 import { GeoCodeStatus } from "~src/configs";
+import type { ReturnShopifyAddress } from "~src/utils/addressFormat/types";
 
-type Props<Target extends keyof ExtensionTargets> = {
-  api: StandardApi<Target> & CheckoutApi;
-};
+const AddressValidation = () => {
+  const translate = useTranslate();
 
-export default function AddressValidation<Target extends RenderExtensionTarget>(
-  props: Props<Target>,
-) {
-  const { api } = props;
+  const applyShippingAddressChange = useApplyShippingAddressChange();
 
-  const [addressFormatted, setAddressFormatted] = useState<string>("");
+  const extension = useExtension();
+
+  const sessionToken = useSessionToken();
 
   const [addressError, setAddressError] = useState<string>("");
 
   const [geoCodeData, setGeoCodeData] = useState<any>(null);
 
-  const [shouldFetch, setShouldFetch] = useState<boolean>(false);
+  const [shouldFetch, setShouldFetch] = useState<boolean>(true);
 
   const [addressId, setAddressId] = useState<string>("");
 
+  const [isAllowProgress, setIsAllowProgress] = useState<boolean>(false);
+
   const shippingAddress = useShippingAddress();
-
-  const applyShippingAddressChange = useApplyShippingAddressChange();
-
-  const canBlockProgress = useExtensionCapability("block_progress");
-
-  const translate = useTranslate();
 
   const appDomain =
     process.env.NODE_ENV === "development"
-      ? new URL(api.extension.scriptUrl)?.origin
+      ? new URL(extension.scriptUrl)?.origin
       : process.env.SHOPIFY_APP_URL;
 
-  useEffect(() => {
-    const addressFormatted = shippingAddress?.address1
-      ? `${
-          shippingAddress?.address2 || ""
-        } ${shippingAddress?.address1} ${shippingAddress?.city}`
-      : "";
+  const handleResetProgress = () => {
+    setGeoCodeData([]);
+    setAddressError("");
+    setShouldFetch(false);
+  };
 
-    setAddressFormatted(addressFormatted);
+  const handelAllowProgress = useCallback(() => {
+    handleResetProgress();
+
+    setIsAllowProgress(true);
+  }, []);
+
+  const addressFormatted = useMemo(() => {
+    const address = [
+      shippingAddress?.address2 || "",
+      shippingAddress?.address1 || "",
+      shippingAddress?.city || "",
+    ];
+
+    return address.filter(Boolean)?.toString();
   }, [shippingAddress]);
 
-  useEffect(() => {
-    const sParameter = encodeURIComponent(addressFormatted.trim());
+  const handleAddressData = useCallback(
+    (data: any) => {
+      if (data?.status !== GeoCodeStatus.OK) {
+        setAddressError(translate(`geocode-status-err.${data?.status}`));
+      }
 
-    const queryApi = async () => {
+      if (data && data?.results) {
+        const isPartialMatch = data?.results?.some(
+          (ele: any) => ele?.partial_match,
+        );
+
+        if (data?.results?.length > 1 || isPartialMatch) {
+          setGeoCodeData(data?.results);
+          setAddressError(translate("geocode-not-match-address"));
+        } else {
+          handelAllowProgress();
+        }
+      } else {
+        handelAllowProgress();
+      }
+    },
+    [handelAllowProgress, translate],
+  );
+
+  const handleFetchAddress = useCallback(async () => {
+    if (!addressFormatted) return;
+
+    try {
+      const sParameter = encodeURIComponent(addressFormatted.trim());
+
       setShouldFetch(false);
 
-      try {
-        const token = await api.sessionToken.get();
+      const token = await sessionToken.get();
 
-        const res = await fetch(
-          `${appDomain}/api/geocode?address=${sParameter}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+      const res = await fetch(
+        `${appDomain}/api/geocode?address=${sParameter}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "text/plain",
           },
-        );
-        const data = await res.json();
+        },
+      );
+      const data = await res.json();
 
-        if (data?.status !== GeoCodeStatus.OK) {
-          setAddressError(translate(`geocode-status-err.${data?.status}`));
-        }
-
-        if (data && data?.results) {
-          const isPartialMatch = data?.results?.some(
-            (ele: any) => ele?.partial_match,
-          );
-
-          if (isPartialMatch) {
-            setGeoCodeData(data?.results);
-            setAddressError(translate("geocode-not-match-address"));
-          } else {
-            setGeoCodeData([]);
-            setAddressError("");
-          }
-        } else {
-          setGeoCodeData([]);
-          setAddressError("");
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-
-    if (canBlockProgress && addressFormatted && shouldFetch) {
-      queryApi();
+      handleAddressData(data);
+    } catch (error) {
+      console.log("error", error);
     }
-  }, [
-    translate,
-    api.sessionToken,
-    appDomain,
-    addressFormatted,
-    canBlockProgress,
-    shouldFetch,
-  ]);
+  }, [addressFormatted, sessionToken, appDomain, handleAddressData]);
+
+  useEffect(() => {
+    setShouldFetch(true);
+
+    setIsAllowProgress(false);
+  }, [addressFormatted]);
+
+  useEffect(() => {
+    if (!isAllowProgress && shouldFetch) {
+      handleFetchAddress();
+    }
+  }, [handleFetchAddress, isAllowProgress, shouldFetch]);
 
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
-    if (canBlockProgress) {
-      setShouldFetch(canBlockProgress);
-
-      if (api?.shippingAddress?.current?.countryCode !== "VN") {
-        return {
-          behavior: "block",
-          reason: "Invalid shipping country",
-          errors: [
-            {
-              message: translate("only-delivery-vietnam"),
-              target: "$.cart.deliveryGroups[0].deliveryAddress.countryCode",
-            },
-          ],
-        };
-      }
-
-      if (geoCodeData?.length) {
-        return {
-          behavior: "block",
-          reason: "Invalid shipping address",
-          perform: () => {
-            setAddressError(translate("invalid-shipping-address"));
+    if (shippingAddress?.countryCode !== "VN") {
+      return {
+        behavior: "block",
+        reason: "Invalid shipping country",
+        errors: [
+          {
+            message: translate("only-delivery-vietnam"),
+            target: "$.cart.deliveryGroups[0].deliveryAddress.countryCode",
           },
-        };
-      }
+        ],
+      };
+    }
 
+    if (isAllowProgress) {
       return {
         behavior: "allow",
+        perform: handleResetProgress,
+      };
+    }
+
+    if (geoCodeData?.length) {
+      return {
+        behavior: "block",
+        reason: "Invalid shipping address",
         perform: () => {
-          setAddressError("");
+          setAddressError(translate("invalid-shipping-address"));
         },
       };
     }
 
     return {
       behavior: "allow",
-      perform: () => {
-        setAddressError("");
-      },
+      perform: handelAllowProgress,
     };
   });
 
-  const addressChoiceRender = () => {
+  const addressSuggestRender = () => {
     return geoCodeData?.map((item: any) => {
       return (
         <Choice key={item.place_id} id={item.place_id}>
@@ -179,29 +180,14 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
       (ele: any) => ele.place_id === addressId,
     );
 
-    const addressApply = formatGeocodeAddress(choiceAddress);
-
-    // const formatAddress = Object.assign(shippingAddress as MailingAddress, {
-    //   ...addressApply,
-    // formatted: [
-    //   shippingAddress?.phone,
-    //   shippingAddress?.firstName,
-    //   shippingAddress?.lastName,
-    //   addressApply?.address2,
-    //   addressApply?.address1,
-    //   addressApply?.city,
-    // ],
-    // });
+    const addressApply = formatGeocodeAddress(
+      choiceAddress,
+    ) as ReturnShopifyAddress;
 
     const newAddress = {
       // ...formatAddress,
       address1: addressApply?.address1,
-      address2: addressApply?.address2,
       city: addressApply?.city,
-      countryCode: addressApply?.countryCode || "VN",
-      // latitude: addressApply?.latitude,
-      // longitude: addressApply?.longitude,
-      provinceCode: addressApply?.provinceCode,
     };
 
     try {
@@ -210,21 +196,16 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
         address: newAddress,
       });
 
-      console.log("applyShippingAddressChange", result);
-
       if (result?.type === "success") {
-        setGeoCodeData([]);
-        setAddressError("");
-        setAddressFormatted("");
+        handelAllowProgress();
       }
-
-      console.log("shippingAddress", shippingAddress);
     } catch (error) {
       console.error(error);
+      handelAllowProgress();
     }
   };
 
-  if (!addressError) return <></>;
+  if (isAllowProgress) return <></>;
 
   return (
     <BlockStack padding="tight" border="base" borderRadius="base">
@@ -234,14 +215,14 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
         value="first"
         onChange={(value: string) => setAddressId(value)}
       >
-        <BlockStack>{addressChoiceRender()}</BlockStack>
+        <BlockStack>{addressSuggestRender()}</BlockStack>
       </ChoiceList>
 
       <Grid spacing={["base", "none"]} columns={["50%", "50%"]}>
         <Button
           kind="plain"
           accessibilityRole="button"
-          onPress={() => setAddressError("")}
+          onPress={handelAllowProgress}
         >
           {translate("continue-payment")}
         </Button>
@@ -256,4 +237,6 @@ export default function AddressValidation<Target extends RenderExtensionTarget>(
       </Grid>
     </BlockStack>
   );
-}
+};
+
+export default AddressValidation;

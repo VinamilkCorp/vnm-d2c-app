@@ -8,7 +8,7 @@ const enum DeliveryAddressTargets {
 
 const extensionRenderAfter = reactExtension(
   DeliveryAddressTargets.RenderAfter,
-  (api) => <AddressValidation api={api} />
+  (api) => <AddressValidation />,
 );
 
 const DeliveryAddressExtensions = {
