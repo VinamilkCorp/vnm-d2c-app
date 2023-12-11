@@ -25,7 +25,7 @@
     }
   },
   "devDependencies": {
-    "vitest": "^0.34.6"
+    "vitest": "^1.0.4"
   },
   "dependencies": {
     "@shopify/shopify_function": "0.1.0",
